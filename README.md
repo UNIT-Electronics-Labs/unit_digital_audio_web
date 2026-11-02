@@ -1,45 +1,45 @@
 # UNIT Digital Audio Web
 
-Reproductor web para audio PCM16 mono enviado por USB/Serial desde los ejemplos
-I2S o PDM de [DevLab_AudioInput](https://github.com/UNIT-Electronics-MX/unit_devlab_audioinput_library).
-El navegador abre el puerto con Web Serial y reproduce el audio con Web Audio.
-No requiere paquetes JavaScript ni un servidor de aplicación.
+A browser player for mono PCM16 audio sent over USB serial by the I2S and PDM
+examples in [DevLab_AudioInput](https://github.com/UNIT-Electronics-MX/unit_devlab_audioinput_library).
+The browser opens the port with Web Serial and plays audio with Web Audio. No
+JavaScript packages or application server are required.
 
-## Uso local
+## Run locally
 
-1. Carga `I2S/ComputerAudio` o `PDM/ComputerAudio` de la versión
-   [v0.3.3](https://github.com/UNIT-Electronics-MX/unit_devlab_audioinput_library/tree/v0.3.3)
-   de la biblioteca. Cierra el Monitor Serie.
-2. En este directorio ejecuta:
+1. Upload `I2S/ComputerAudio` or `PDM/ComputerAudio` from library version
+   [v0.3.3](https://github.com/UNIT-Electronics-MX/unit_devlab_audioinput_library/tree/v0.3.3).
+   Close the Arduino Serial Monitor.
+2. Run this command from the website directory:
 
    ```bash
    python3 -m http.server 8000 --bind 127.0.0.1
    ```
 
-3. Abre `http://127.0.0.1:8000/` en Chrome o Edge de escritorio.
-4. Selecciona **ComputerAudio · 16 kHz · 921600 baud**, pulsa **Conectar y
-   escuchar** y elige el puerto de la placa.
+3. Open `http://127.0.0.1:8000/` in desktop Chrome or Edge.
+4. Keep **ComputerAudio · 16 kHz · 921600 baud** selected, click **Connect and
+   listen**, and choose the board's serial port.
 
-La página también ofrece perfiles para `SerialStream` a 48 kHz/2000000 baud y
-PDM en RP2040/RP2350 a 8 kHz/2000000 baud. El perfil debe coincidir con la
-frecuencia y velocidad del sketch. El audio en RP2040/RP2350 aún no se ha
-validado en placas físicas.
+The page also has profiles for `SerialStream` at 48 kHz/2000000 baud and PDM
+on RP2040/RP2350 at 8 kHz/2000000 baud. The selected profile must match the
+sketch's sample rate and baud rate. Audio on RP2040/RP2350 has not been verified
+on physical boards.
 
-## Protocolo
+## Serial protocol
 
-- La página envía `R` para iniciar o sincronizar y `S` al desconectar.
-- El dispositivo responde con `RAW\r\n` antes de los datos.
-- Los datos son muestras PCM16 mono con signo, little endian, sin delimitadores.
-- La salida se reproduce en el dispositivo de audio predeterminado del sistema.
-  Esta página no crea un micrófono virtual para otras aplicaciones.
+- The page sends `R` to start or resynchronize and `S` when disconnecting.
+- The board sends `RAW\r\n` before the audio data.
+- Audio data is signed, little-endian, mono PCM16 with no delimiters.
+- Playback uses the system's default audio output. This page does not create
+  a virtual microphone for other applications.
 
-Web Serial requiere un navegador compatible y un contexto seguro, como
-`localhost` o HTTPS. Cierra cualquier programa que esté usando el puerto
-serial antes de conectar.
+Web Serial requires a compatible browser and a secure context such as
+`localhost` or HTTPS. Close any other application using the serial port before
+connecting.
 
-## Publicación en GitHub Pages
+## Publish with GitHub Pages
 
-El proyecto es estático: `index.html` y `app.js` se sirven desde la raíz.
-En **Settings > Pages**, selecciona **Deploy from a branch**, la rama `main`
-y la carpeta **/(root)**. La URL resultante será
+This is a static site: `index.html` and `app.js` are served from the repository
+root. In **Settings > Pages**, choose **Deploy from a branch**, select `main`
+and **/(root)**, then save. The site URL will be
 `https://unit-electronics-labs.github.io/unit_digital_audio_web/`.

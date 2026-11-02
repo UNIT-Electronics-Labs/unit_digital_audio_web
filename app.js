@@ -97,7 +97,7 @@ async function readSerial(session) {
   while (!session.stopped) {
     const { value, done } = await session.reader.read();
     if (done) {
-      if (!session.stopped) throw new Error("El puerto serial se cerró.");
+      if (!session.stopped) throw new Error("The serial port closed.");
       return;
     }
     if (!value || value.length === 0) continue;
@@ -116,7 +116,7 @@ async function readSerial(session) {
         session.synced = true;
         clearInterval(session.retryTimer);
         clearTimeout(session.syncTimer);
-        setStatus("Recibiendo audio PCM16.", "ok");
+        setStatus("Receiving PCM16 audio.", "ok");
         receivePcm(session, value.subarray(i + 1));
         break;
       }
@@ -145,7 +145,7 @@ async function closeSession(session) {
       meter.value = 0;
       levelText.value = "0 %";
       queueText.value = "0 ms";
-      setStatus(session.finalMessage || "Desconectado.", session.finalMessage ? "error" : "idle");
+      setStatus(session.finalMessage || "Disconnected.", session.finalMessage ? "error" : "idle");
       updateControls();
     }
   })();
@@ -155,13 +155,13 @@ async function closeSession(session) {
 async function connect() {
   if (connecting || activeSession) return;
   if (!window.isSecureContext || !("serial" in navigator)) {
-    setStatus("Web Serial requiere Chrome o Edge de escritorio en localhost o HTTPS.", "error");
+    setStatus("Web Serial requires desktop Chrome or Edge on localhost or HTTPS.", "error");
     return;
   }
 
   connecting = true;
   updateControls();
-  setStatus("Selecciona el puerto serial del dispositivo…", "busy");
+  setStatus("Choose your board's serial port…", "busy");
   const profile = PROFILES[profileSelect.value];
   let audio = null;
   let port = null;
@@ -202,19 +202,19 @@ async function connect() {
     activeSession = session;
     connecting = false;
     updateControls();
-    setStatus("Esperando encabezado RAW del dispositivo…", "busy");
+    setStatus("Waiting for the board's RAW header…", "busy");
 
     session.retryTimer = setInterval(() => {
       if (!session.synced && !session.stopped) {
         writer.write(START_COMMAND).catch(() => {
-          session.finalMessage = "Se perdió la conexión serial.";
+          session.finalMessage = "The serial connection was lost.";
           void closeSession(session);
         });
       }
     }, 500);
     session.syncTimer = setTimeout(() => {
       if (!session.synced && !session.stopped) {
-        session.finalMessage = "No llegó RAW. Revisa el sketch, el perfil y el puerto.";
+        session.finalMessage = "No RAW header received. Check the sketch, profile, and port.";
         void closeSession(session);
       }
     }, 6000);
@@ -232,8 +232,8 @@ async function connect() {
       try { writer?.releaseLock(); } catch (_) { /* No active write. */ }
       try { await port?.close(); } catch (_) { /* Port may not be open. */ }
       try { await audio?.close(); } catch (_) { /* Context may not be open. */ }
-      setStatus(error.name === "NotFoundError" ? "Selección de puerto cancelada." :
-        `No se pudo conectar: ${error.message || error}`, "error");
+      setStatus(error.name === "NotFoundError" ? "Port selection canceled." :
+        `Could not connect: ${error.message || error}`, "error");
     }
     connecting = false;
     updateControls();
@@ -253,6 +253,6 @@ volumeInput.addEventListener("input", () => {
 });
 updateControls();
 if (!window.isSecureContext || !("serial" in navigator)) {
-  setStatus("Abre esta página en Chrome o Edge de escritorio mediante localhost o HTTPS.", "error");
+  setStatus("Open this page in desktop Chrome or Edge on localhost or HTTPS.", "error");
   connectButton.disabled = true;
 }

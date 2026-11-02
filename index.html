@@ -1,10 +1,10 @@
 <!doctype html>
-<html lang="es">
+<html lang="en">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#0c1824">
-  <title>DevLab Audio | Reproductor serial</title>
+  <title>DevLab Audio | Serial player</title>
   <style>
     :root { font-family: system-ui, sans-serif; color: #eaf3f7; background: #0c1824; }
     * { box-sizing: border-box; }
@@ -49,47 +49,47 @@
 <body>
   <main>
     <div class="eyebrow">DevLab · Audio Input</div>
-    <h1>Audio serial en vivo</h1>
-    <p class="intro">Escucha en el navegador el audio PCM16 que envía tu ESP32 o RP por USB/Serial. La conexión se hace directamente desde esta página al puerto que elijas.</p>
+    <h1>Live serial audio</h1>
+    <p class="intro">Listen to PCM16 audio from your ESP32 or RP board over USB serial. This page connects directly to the port you choose.</p>
 
     <section class="panel" aria-labelledby="player-title">
-      <h2 id="player-title">Reproductor</h2>
+      <h2 id="player-title">Player</h2>
       <div class="grid">
         <div>
-          <label for="profile">Formato del sketch</label>
+          <label for="profile">Sketch format</label>
           <select id="profile">
             <option value="computer">ComputerAudio · 16 kHz · 921600 baud</option>
             <option value="fast">SerialStream · 48 kHz · 2000000 baud</option>
             <option value="rp-pdm">PDM SerialStream RP · 8 kHz · 2000000 baud</option>
           </select>
-          <p class="hint">Elige la misma frecuencia y velocidad configuradas en el sketch.</p>
+          <p class="hint">Match the sample rate and baud rate configured in your sketch.</p>
         </div>
         <div>
-          <div class="volume-row"><label for="volume">Volumen</label><output id="volume-value" for="volume">100 %</output></div>
+          <div class="volume-row"><label for="volume">Volume</label><output id="volume-value" for="volume">100 %</output></div>
           <input id="volume" type="range" min="0" max="200" value="100" step="1">
         </div>
       </div>
 
       <div class="buttons">
-        <button id="connect" class="primary" type="button">Conectar y escuchar</button>
-        <button id="disconnect" class="secondary" type="button" disabled>Desconectar</button>
+        <button id="connect" class="primary" type="button">Connect and listen</button>
+        <button id="disconnect" class="secondary" type="button" disabled>Disconnect</button>
       </div>
       <div id="status-box" class="status" data-state="idle" role="status" aria-live="polite">
-        <span class="dot" aria-hidden="true"></span><span id="status">Listo para conectar.</span>
+        <span class="dot" aria-hidden="true"></span><span id="status">Ready to connect.</span>
       </div>
-      <div class="meter-row"><span>Nivel de entrada</span><output id="level">0 %</output></div>
-      <progress id="meter" max="1" value="0" aria-label="Nivel de entrada"></progress>
-      <div class="stats"><span>Recibidos: <output id="received">0 KB</output></span><span>Cola de audio: <output id="queue">0 ms</output></span></div>
+      <div class="meter-row"><span>Input level</span><output id="level">0 %</output></div>
+      <progress id="meter" max="1" value="0" aria-label="Input level"></progress>
+      <div class="stats"><span>Received: <output id="received">0 KB</output></span><span>Audio queue: <output id="queue">0 ms</output></span></div>
     </section>
 
     <section class="steps" aria-labelledby="steps-title">
-      <h2 id="steps-title">Cómo usarlo</h2>
+      <h2 id="steps-title">How to use it</h2>
       <ol>
-        <li>Carga <a href="https://github.com/UNIT-Electronics-MX/unit_devlab_audioinput_library/tree/v0.3.3/examples/I2S/ComputerAudio">I2S/ComputerAudio</a> o <a href="https://github.com/UNIT-Electronics-MX/unit_devlab_audioinput_library/tree/v0.3.3/examples/PDM/ComputerAudio">PDM/ComputerAudio</a> y selecciona el perfil de 16 kHz. Para <code>SerialStream</code>, selecciona el perfil que corresponda.</li>
-        <li>Cierra el Monitor Serie y cualquier programa que esté usando el puerto.</li>
-        <li>Pulsa «Conectar y escuchar», elige el puerto y acepta el permiso del navegador.</li>
+        <li>Upload <a href="https://github.com/UNIT-Electronics-MX/unit_devlab_audioinput_library/tree/v0.3.3/examples/I2S/ComputerAudio">I2S/ComputerAudio</a> or <a href="https://github.com/UNIT-Electronics-MX/unit_devlab_audioinput_library/tree/v0.3.3/examples/PDM/ComputerAudio">PDM/ComputerAudio</a> and select the 16 kHz profile. For <code>SerialStream</code>, select the matching profile.</li>
+        <li>Close the Arduino Serial Monitor and any other app using the port.</li>
+        <li>Click <strong>Connect and listen</strong>, choose the port, and grant browser access.</li>
       </ol>
-      <p class="note">Funciona en navegadores de escritorio compatibles con Web Serial, como Chrome o Edge, desde <code>localhost</code> o HTTPS. Usa la salida de audio predeterminada del sistema; no crea un micrófono virtual. El audio en RP2040/RP2350 aún no se ha validado en hardware.</p>
+      <p class="note">Use a desktop browser with Web Serial support, such as Chrome or Edge, on <code>localhost</code> or HTTPS. Playback uses your default audio output; this page does not create a virtual microphone. RP2040/RP2350 audio has not been verified on hardware.</p>
     </section>
   </main>
   <script src="./app.js" defer></script>
