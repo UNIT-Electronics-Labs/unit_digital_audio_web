@@ -2,8 +2,9 @@
 
 A browser player for mono PCM16 audio sent over USB serial by the I2S and PDM
 examples in [DevLab_AudioInput](https://github.com/UNIT-Electronics-MX/unit_devlab_audioinput_library).
-The browser opens the port with Web Serial and plays audio with Web Audio. No
-JavaScript packages or application server are required.
+The browser opens the port with Web Serial and plays audio with Web Audio.
+The interface uses Bootstrap CSS from a CDN; no build step or application
+server is required.
 
 ## Run locally
 
@@ -39,7 +40,7 @@ connecting.
 
 ## Publish with GitHub Pages
 
-This is a static site: `index.html` and `app.js` are served from the repository
+This is a static site: `index.html`, `styles.css`, and `app.js` are served from the repository
 root. In **Settings > Pages**, choose **Deploy from a branch**, select `main`
 and **/(root)**, then save. The site URL will be
 `https://unit-electronics-labs.github.io/unit_digital_audio_web/`.

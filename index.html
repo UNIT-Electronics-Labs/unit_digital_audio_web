@@ -3,95 +3,107 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#0c1824">
-  <title>DevLab Audio | Serial player</title>
-  <style>
-    :root { font-family: system-ui, sans-serif; color: #eaf3f7; background: #0c1824; }
-    * { box-sizing: border-box; }
-    body { margin: 0; min-height: 100vh; background: radial-gradient(circle at 15% 0%, #17344a 0, #0c1824 42%); }
-    main { width: min(900px, calc(100% - 32px)); margin: 0 auto; padding: 42px 0 60px; }
-    .eyebrow { color: #62dfcd; font-size: .83rem; font-weight: 700; letter-spacing: .15em; text-transform: uppercase; }
-    h1 { font-size: clamp(2rem, 5vw, 3.4rem); letter-spacing: -.04em; line-height: 1.08; margin: 12px 0; }
-    h2 { font-size: 1.2rem; margin: 0 0 18px; }
-    p { line-height: 1.55; color: #bbccd5; }
-    a { color: #9df5e6; }
-    a:hover { color: #d1fff6; }
-    .intro { max-width: 680px; margin-bottom: 30px; }
-    .panel { border: 1px solid #345061; border-radius: 18px; padding: 24px; background: #122536; box-shadow: 0 18px 45px #07111c55; }
-    .grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(210px, .7fr); gap: 22px; }
-    label { display: block; color: #dcecf2; font-weight: 650; margin-bottom: 9px; }
-    select, input[type="range"] { width: 100%; }
-    select { min-height: 44px; padding: 8px 12px; color: #eaf3f7; background: #0b1b2a; border: 1px solid #496879; border-radius: 9px; font: inherit; }
-    .hint { font-size: .88rem; margin: 8px 0 0; }
-    .volume-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
-    input[type="range"] { accent-color: #62dfcd; margin-top: 13px; }
-    .buttons { display: flex; flex-wrap: wrap; gap: 12px; margin: 28px 0 20px; }
-    button { min-height: 46px; border-radius: 9px; padding: 10px 18px; font: inherit; font-weight: 700; cursor: pointer; }
-    button:focus-visible, select:focus-visible, input:focus-visible { outline: 3px solid #8cf7e4; outline-offset: 2px; }
-    button:disabled { opacity: .5; cursor: not-allowed; }
-    .primary { color: #08202b; background: #62dfcd; border: 1px solid #62dfcd; }
-    .secondary { color: #eaf3f7; background: transparent; border: 1px solid #6b8796; }
-    .status { display: flex; align-items: center; gap: 10px; padding: 12px 14px; border: 1px solid #3a5b69; border-radius: 9px; background: #0b1b2a; }
-    .dot { width: 9px; height: 9px; flex: none; border-radius: 50%; background: #a1b5c0; }
-    .status[data-state="ok"] .dot { background: #62dfcd; }
-    .status[data-state="error"] .dot { background: #ff9188; }
-    .status[data-state="busy"] .dot { background: #ffc46b; }
-    .meter-row { display: flex; justify-content: space-between; margin-top: 24px; color: #dcecf2; font-size: .92rem; }
-    progress { display: block; width: 100%; height: 14px; margin-top: 9px; accent-color: #62dfcd; }
-    .stats { display: flex; flex-wrap: wrap; gap: 22px; color: #a9bdc9; font-size: .88rem; margin: 15px 0 0; }
-    .steps { margin-top: 28px; }
-    .steps ol { color: #bbccd5; line-height: 1.8; padding-left: 22px; }
-    code { color: #9df5e6; background: #0b1b2a; border-radius: 4px; padding: 2px 5px; }
-    .note { border-left: 3px solid #62dfcd; padding-left: 15px; margin-top: 20px; }
-    @media (max-width: 650px) { main { padding-top: 28px; } .grid { grid-template-columns: 1fr; } .panel { padding: 18px; } }
-  </style>
+  <meta name="theme-color" content="#f7f8fa">
+  <title>Serial Audio Monitor | DevLab</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+  <link rel="stylesheet" href="./styles.css">
+  <script src="./app.js" defer></script>
 </head>
 <body>
-  <main>
-    <div class="eyebrow">DevLab · Audio Input</div>
-    <h1>Live serial audio</h1>
-    <p class="intro">Listen to PCM16 audio from your ESP32 or RP board over USB serial. This page connects directly to the port you choose.</p>
+  <header class="site-header">
+    <div class="container d-flex align-items-center justify-content-between py-3">
+      <a class="brand text-decoration-none" href="./" aria-label="DevLab Audio home">DevLab <span>Audio</span></a>
+      <a class="header-link" href="https://github.com/UNIT-Electronics-Labs/unit_digital_audio_web">View on GitHub <span aria-hidden="true">↗</span></a>
+    </div>
+  </header>
 
-    <section class="panel" aria-labelledby="player-title">
-      <h2 id="player-title">Player</h2>
-      <div class="grid">
-        <div>
-          <label for="profile">Sketch format</label>
-          <select id="profile">
-            <option value="computer">ComputerAudio · 16 kHz · 921600 baud</option>
-            <option value="fast">SerialStream · 48 kHz · 2000000 baud</option>
-            <option value="rp-pdm">PDM SerialStream RP · 8 kHz · 2000000 baud</option>
-          </select>
-          <p class="hint">Match the sample rate and baud rate configured in your sketch.</p>
-        </div>
-        <div>
-          <div class="volume-row"><label for="volume">Volume</label><output id="volume-value" for="volume">100 %</output></div>
-          <input id="volume" type="range" min="0" max="200" value="100" step="1">
-        </div>
+  <main class="container py-4 py-md-5">
+    <div class="page-intro mb-4 mb-md-5">
+      <p class="section-label mb-2">AUDIO INPUT TOOLS</p>
+      <h1 class="mb-3">Serial audio monitor</h1>
+      <p class="lead mb-0">Listen to mono PCM16 audio from your ESP32 or RP board over USB serial.</p>
+    </div>
+
+    <div class="row g-4 align-items-start">
+      <div class="col-lg-7">
+        <section class="surface p-4 p-md-5" aria-labelledby="player-title">
+          <div class="d-flex align-items-center justify-content-between gap-3 mb-4">
+            <h2 id="player-title" class="section-heading mb-0">Player</h2>
+            <span class="format-label">USB serial</span>
+          </div>
+
+          <div class="mb-4">
+            <label for="profile" class="form-label">Sketch format</label>
+            <select id="profile" class="form-select">
+              <option value="computer">ComputerAudio · 16 kHz · 921600 baud</option>
+              <option value="fast">SerialStream · 48 kHz · 2000000 baud</option>
+              <option value="rp-pdm">PDM SerialStream RP · 8 kHz · 2000000 baud</option>
+            </select>
+            <div class="form-text">Choose the profile that matches your sketch's sample rate and baud rate.</div>
+          </div>
+
+          <div class="mb-4">
+            <div class="d-flex align-items-center justify-content-between">
+              <label for="volume" class="form-label mb-0">Volume</label>
+              <output id="volume-value" for="volume" class="value-label">100 %</output>
+            </div>
+            <input id="volume" class="form-range mt-2" type="range" min="0" max="200" value="100" step="1">
+          </div>
+
+          <div class="d-flex flex-wrap gap-2 mb-4">
+            <button id="connect" class="btn btn-primary" type="button">Connect and listen</button>
+            <button id="disconnect" class="btn btn-outline-secondary" type="button" disabled>Disconnect</button>
+          </div>
+
+          <div id="status-box" class="status-line" data-state="idle" role="status" aria-live="polite">
+            <span class="status-dot" aria-hidden="true"></span>
+            <span id="status">Ready to connect.</span>
+          </div>
+
+          <div class="d-flex align-items-center justify-content-between mt-4 mb-2">
+            <span class="form-label mb-0">Input level</span>
+            <output id="level" class="value-label">0 %</output>
+          </div>
+          <progress id="meter" class="audio-meter" max="1" value="0" aria-label="Input level"></progress>
+
+          <div class="stats row g-0 mt-4" aria-label="Audio statistics">
+            <div class="col-6 pe-3">
+              <div class="stat-label">Received</div>
+              <output id="received" class="stat-value">0 KB</output>
+            </div>
+            <div class="col-6 ps-3 stat-divider">
+              <div class="stat-label">Audio queue</div>
+              <output id="queue" class="stat-value">0 ms</output>
+            </div>
+          </div>
+        </section>
       </div>
 
-      <div class="buttons">
-        <button id="connect" class="primary" type="button">Connect and listen</button>
-        <button id="disconnect" class="secondary" type="button" disabled>Disconnect</button>
+      <div class="col-lg-5">
+        <section class="surface p-4 p-md-5" aria-labelledby="steps-title">
+          <h2 id="steps-title" class="section-heading mb-4">Get started</h2>
+          <ol class="setup-list mb-4">
+            <li>
+              <strong>Upload a sketch</strong>
+              <span>Use <a href="https://github.com/UNIT-Electronics-MX/unit_devlab_audioinput_library/tree/v0.3.3/examples/I2S/ComputerAudio">I2S/ComputerAudio</a> or <a href="https://github.com/UNIT-Electronics-MX/unit_devlab_audioinput_library/tree/v0.3.3/examples/PDM/ComputerAudio">PDM/ComputerAudio</a> for the 16 kHz profile. Select the matching profile for SerialStream.</span>
+            </li>
+            <li>
+              <strong>Free the serial port</strong>
+              <span>Close the Arduino Serial Monitor and any other app using the port.</span>
+            </li>
+            <li>
+              <strong>Start listening</strong>
+              <span>Click <b>Connect and listen</b>, choose the port, and allow browser access.</span>
+            </li>
+          </ol>
+          <div class="support-note">
+            <h3 class="note-heading">Before you connect</h3>
+            <p class="mb-0">Use desktop Chrome or Edge on HTTPS or localhost. Audio plays through your default output. RP2040/RP2350 audio has not been verified on hardware.</p>
+          </div>
+        </section>
       </div>
-      <div id="status-box" class="status" data-state="idle" role="status" aria-live="polite">
-        <span class="dot" aria-hidden="true"></span><span id="status">Ready to connect.</span>
-      </div>
-      <div class="meter-row"><span>Input level</span><output id="level">0 %</output></div>
-      <progress id="meter" max="1" value="0" aria-label="Input level"></progress>
-      <div class="stats"><span>Received: <output id="received">0 KB</output></span><span>Audio queue: <output id="queue">0 ms</output></span></div>
-    </section>
-
-    <section class="steps" aria-labelledby="steps-title">
-      <h2 id="steps-title">How to use it</h2>
-      <ol>
-        <li>Upload <a href="https://github.com/UNIT-Electronics-MX/unit_devlab_audioinput_library/tree/v0.3.3/examples/I2S/ComputerAudio">I2S/ComputerAudio</a> or <a href="https://github.com/UNIT-Electronics-MX/unit_devlab_audioinput_library/tree/v0.3.3/examples/PDM/ComputerAudio">PDM/ComputerAudio</a> and select the 16 kHz profile. For <code>SerialStream</code>, select the matching profile.</li>
-        <li>Close the Arduino Serial Monitor and any other app using the port.</li>
-        <li>Click <strong>Connect and listen</strong>, choose the port, and grant browser access.</li>
-      </ol>
-      <p class="note">Use a desktop browser with Web Serial support, such as Chrome or Edge, on <code>localhost</code> or HTTPS. Playback uses your default audio output; this page does not create a virtual microphone. RP2040/RP2350 audio has not been verified on hardware.</p>
-    </section>
+    </div>
+    <footer class="site-footer mt-4">DevLab Audio Input · Browser audio tools</footer>
   </main>
-  <script src="./app.js" defer></script>
 </body>
 </html>
